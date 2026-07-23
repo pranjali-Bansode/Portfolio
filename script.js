@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...`;
 
         // Send request to your backend server
-        const response = await fetch("https://portfolio-35qz.onrender.com/api/data", {
+        const response = await fetch("https://portfolio-35qz.onrender.com/api/contact", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
