@@ -74,12 +74,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Send request to your backend server
         const response = await fetch("https://portfolio-35qz.onrender.com/api/contact", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ fullname, email, message }),
-        });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ fullname, email, message }),
+});
 
         const data = await response.json();
 
