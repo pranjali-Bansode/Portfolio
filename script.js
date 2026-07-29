@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          alert("Message sent successfully! Check your inbox for confirmation.");
+          alert("Message sent successfully! I’ll get back to you soon.");
           contactForm.reset();
         } else {
           alert("Failed to send message: " + (data.error || "Unknown error occurred"));
