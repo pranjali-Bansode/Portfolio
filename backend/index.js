@@ -1,15 +1,19 @@
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
 
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const { Resend } = require('resend');
 
 const Message = require('./models/Message');
 
 const app = express();
+
+// ✅ Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Middleware
 app.use(cors());
@@ -21,65 +25,61 @@ mongoose
   .then(() => console.log('MongoDB Connected Successfully!'))
   .catch((err) => console.error('MongoDB Connection Error:', err));
 
-// Nodemailer Transporter Setup
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// Contact Form Endpoint
+// ✅ CONTACT FORM API
 app.post('/api/contact', async (req, res) => {
   const { fullname, email, message } = req.body;
 
   if (!fullname || !email || !message) {
-    return res.status(400).json({ success: false, error: 'Please provide all fields.' });
+    return res.status(400).json({
+      success: false,
+      error: 'Please provide all fields.',
+    });
   }
 
   try {
-    // 1. Save to MongoDB
+    // ✅ 1. Save to MongoDB
     const newMessage = new Message({ fullname, email, message });
     await newMessage.save();
 
-    // 2. Email Notification to Admin (You)
-    const adminMailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER,
-      subject: `New Portfolio Message from ${fullname}`,
+    // ✅ 2. Send Email to YOU (Admin)
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: process.env.EMAIL_USER, // your email
+      subject: `New message from ${fullname}`,
       html: `
-        <h3>New Contact Form Submission</h3>
-        <p><strong>Name:</strong> ${fullname}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        <h3>New Contact Message</h3>
+        <p><b>Name:</b> ${fullname}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Message:</b> ${message}</p>
       `,
-    };
+    });
 
-    // 3. Confirmation Email to the User
-    const userMailOptions = {
-      from: process.env.EMAIL_USER,
+    // ✅ 3. Send Confirmation Email to USER
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
-      subject: 'Thank you for getting in touch!',
+      subject: 'Thanks for contacting me!',
       html: `
         <h3>Hi ${fullname},</h3>
-        <p>Thank you for reaching out through my portfolio website!</p>
-        <p>I have received your message and will get back to you as soon as possible.</p>
-        <br />
-        <p>Best regards,</p>
-        <p>Pranjali Bansode</p>
+        <p>Thanks for reaching out through my portfolio.</p>
+        <p>I’ll get back to you soon.</p>
+        <br/>
+        <p>— Pranjali</p>
       `,
-    };
+    });
 
-    // Send both emails
-    await transporter.sendMail(adminMailOptions);
-    await transporter.sendMail(userMailOptions);
+    // ✅ 4. Success Response
+    res.status(201).json({
+      success: true,
+      message: 'Message sent successfully!',
+    });
 
-    res.status(201).json({ success: true, message: 'Message sent successfully!' });
   } catch (error) {
     console.error('Error handling contact submission:', error);
-    res.status(500).json({ success: false, error: 'Server error. Please try again later.' });
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
