@@ -20,7 +20,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ✅ FIXED MODEL (IMPORTANT)
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-3.6-flash"
+});
 
 
 // Middleware
@@ -160,13 +162,13 @@ Respond in full, complete sentences — do not truncate or abbreviate.`;
     });
 
   } catch (error) {
-    console.error("Gemini Error:", error);
+  console.error("Gemini Error:", error);
 
-    res.json({
-      success: true,
-      reply: "I'm having a small issue right now, but feel free to ask again 😊"
-    });
-  }
+  res.json({
+    success: true,
+    reply: "I'm having a small issue right now, but feel free to ask again 😊"
+  });
+}
 });
 
 // =============================
