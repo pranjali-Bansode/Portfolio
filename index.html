@@ -195,11 +195,25 @@
     <div id="project">
         <div class="project-header">
             <h1 class="section-title">WHAT I'VE DONE</h1>
-           
+
         </div>
 
         <!-- Project Section -->
         <div class="project-grid">
+
+
+            <div class="projectcard" data-title="ExpenseIQ" data-subtitle="Smart Expense Management System"
+                data-img="assets/expenseiq.png"
+                data-desc="ExpenseIQ is a full-stack expense management system designed to help users track, analyze, and optimize their spending. It features budget alerts, anomaly detection, recurring expense tracking, OCR-based receipt scanning, and detailed financial reports for smarter decision-making."
+                data-link="https://expenseiq-y2m4.onrender.com/">
+
+                <div class="projectimage">
+                    <img src="assets/expenseiq.png" alt="ExpenseIQ">
+                </div>
+
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                <div class="name">ExpenseIQ</div>
+            </div>
 
             <!-- Project Card 1 -->
             <div class="projectcard" data-title="TravelTales" data-subtitle="Travel Blog & Exploration Platform"
@@ -286,41 +300,42 @@
 
 
     <div id="codingprofiles">
-  <div class="container text-center">
-    <h1 class="section-title">Coding profiles</h1>
+        <div class="container text-center">
+            <h1 class="section-title">Coding profiles</h1>
 
-    <div class="row justify-content-center g-4 mt-3">
-      <!-- Card 1 -->
-      <div class="col-12 col-md-6 col-lg-5">
-        <div class="profile-card">
-          <div class="icon-circle">
-            <img src="assets/gfg.jpg" alt="GeeksforGeeks">
-          </div>
-          <h3 class="profile-title">GeeksforGeeks</h3>
-          <p>Top contributor with 2000+ score and verified badges.</p>
-          <a href="https://www.geeksforgeeks.org/profile/pranjalibansode" target="_blank" class="profile-link">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Visit Profile</span>
-          </a>
-        </div>
-      </div>
+            <div class="row justify-content-center g-4 mt-3">
+                <!-- Card 1 -->
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="profile-card">
+                        <div class="icon-circle">
+                            <img src="assets/gfg.jpg" alt="GeeksforGeeks">
+                        </div>
+                        <h3 class="profile-title">GeeksforGeeks</h3>
+                        <p>Top contributor with 2000+ score and verified badges.</p>
+                        <a href="https://www.geeksforgeeks.org/profile/pranjalibansode" target="_blank"
+                            class="profile-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Visit Profile</span>
+                        </a>
+                    </div>
+                </div>
 
-      <!-- Card 2 -->
-      <div class="col-12 col-md-6 col-lg-5">
-        <div class="profile-card">
-          <div class="icon-circle">
-            <img src="assets/leetcode.jpg" alt="LeetCode">
-          </div>
-          <h3 class="profile-title">LeetCode</h3>
-          <p>Solved 200+ DSA problems with consistent daily practice</p>
-          <a href="https://leetcode.com/u/pranjali05/" target="_blank" class="profile-link">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Visit Profile</span>
-          </a>
+                <!-- Card 2 -->
+                <div class="col-12 col-md-6 col-lg-5">
+                    <div class="profile-card">
+                        <div class="icon-circle">
+                            <img src="assets/leetcode.jpg" alt="LeetCode">
+                        </div>
+                        <h3 class="profile-title">LeetCode</h3>
+                        <p>Solved 200+ DSA problems with consistent daily practice</p>
+                        <a href="https://leetcode.com/u/pranjali05/" target="_blank" class="profile-link">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Visit Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
     </div>
-
-  </div>
-</div>
 
     <div id="achievements">
         <div class="container text-center">
@@ -338,8 +353,19 @@
                             score of 2000+.</p>
                     </div>
                 </div>
-
                 <!-- Achievement 2 -->
+                <div class="achieve-card">
+                    <div class="achieve-icon">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div class="achieve-content">
+                        <h3 class="card-subtitle">Academic Excellence – 9.52 CGPA</h3>
+                        <p>Secured 1st rank in the class with an outstanding CGPA of 9.52, demonstrating strong academic
+                            consistency and dedication.</p>
+                    </div>
+                </div>
+
+                <!-- Achievement 3 -->
                 <div class="achieve-card">
                     <div class="achieve-icon">
                         <i class="fa-solid fa-users-gear"></i>
@@ -351,7 +377,7 @@
                     </div>
                 </div>
 
-                <!-- Achievement 3 -->
+                <!-- Achievement 4 -->
                 <div class="achieve-card">
                     <div class="achieve-icon">
                         <i class="fa-solid fa-chart-line"></i>
@@ -363,7 +389,7 @@
                     </div>
                 </div>
 
-                <!-- Achievement 4 -->
+                <!-- Achievement 5 -->
                 <div class="achieve-card">
                     <div class="achieve-icon">
                         <i class="fa-solid fa-certificate"></i>
@@ -443,6 +469,35 @@
         <p class="copyright-text">© Pranjali Bansode 2026</p>
     </footer>
 
+    <!-- 💬 Chatbot Button -->
+    <div id="chatbot-btn">💬</div>
+
+    <!-- 💬 Chat Window -->
+
+    <div id="chatbot-container">
+        <div id="chatbot-header">Portfolio Assistant</div>
+
+        <div id="chatbot-messages"></div>
+
+        <div id="chatbot-input">
+
+            <div class="quick-actions">
+                <button onclick="sendQuick('skills')">Skills</button>
+                <button onclick="sendQuick('projects')">Projects</button>
+                <button onclick="sendQuick('contact')">Contact</button>
+            </div>
+
+            <div class="input-row">
+                <input type="text" id="user-input" placeholder="Ask me anything..." />
+                <button id="send-btn">Send</button>
+            </div>
+
+        </div>
+
+    </div>
+    <div id="chatbot-overlay"></div>
+
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>

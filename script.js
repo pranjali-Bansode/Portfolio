@@ -1,6 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ==========================================
+// BACKEND CONFIG
+// ==========================================
+const BACKEND_URL = "https://portfolio-35qz.onrender.com";
+
+let sendMessage;
+
+
   // ==========================================
-  // 1. PROJECT MODAL LOGIC
+  // PROJECT MODAL
   // ==========================================
   const cards = document.querySelectorAll(".projectcard");
   const modal = document.getElementById("projectModal");
@@ -10,43 +17,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalImage = document.getElementById("modalImage");
   const modalDescription = document.getElementById("modalDescription");
   const modalLiveLink = document.getElementById("modalLiveLink");
+
   const closeIcon = document.getElementById("closeModalIcon");
   const closeBtn = document.getElementById("closeModalBtn");
 
-  cards.forEach((card) => {
+  cards.forEach(card => {
     card.addEventListener("click", () => {
-      const title = card.getAttribute("data-title");
-      const subtitle = card.getAttribute("data-subtitle");
-      const imgSrc = card.getAttribute("data-img");
-      const desc = card.getAttribute("data-desc");
-      const link = card.getAttribute("data-link");
-
-      modalTitle.textContent = title;
-      modalSubtitle.textContent = subtitle;
-      modalImage.src = imgSrc;
-      modalDescription.textContent = desc;
-      modalLiveLink.href = link;
+      modalTitle.textContent = card.dataset.title;
+      modalSubtitle.textContent = card.dataset.subtitle;
+      modalImage.src = card.dataset.img;
+      modalDescription.textContent = card.dataset.desc;
+      modalLiveLink.href = card.dataset.link;
 
       modal.classList.add("active");
     });
   });
 
-  const closeModal = () => {
-    modal.classList.remove("active");
-  };
+  const closeModal = () => modal.classList.remove("active");
 
-  if (closeIcon) closeIcon.addEventListener("click", closeModal);
-  if (closeBtn) closeBtn.addEventListener("click", closeModal);
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        closeModal();
-      }
-    });
-  }
+  closeIcon?.addEventListener("click", closeModal);
+  closeBtn?.addEventListener("click", closeModal);
+
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
 
   // ==========================================
-  // 2. CONTACT FORM BACKEND SUBMISSION LOGIC
+  // CONTACT FORM
   // ==========================================
   const contactForm = document.querySelector(".contact-form");
 
@@ -54,49 +52,160 @@ document.addEventListener("DOMContentLoaded", () => {
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const submitBtn = contactForm.querySelector(".btn-send-message");
-      const originalBtnText = submitBtn.innerHTML;
+      const btn = contactForm.querySelector(".btn-send-message");
+      const original = btn.innerHTML;
 
-      // Get values from form inputs
       const fullname = document.getElementById("fullname").value.trim();
       const email = document.getElementById("email").value.trim();
       const message = document.getElementById("message").value.trim();
 
-      if (!fullname || !email || !message) {
-        alert("Please fill in all fields.");
-        return;
-      }
+      if (!fullname || !email || !message) return;
 
       try {
-        // UI Feedback: Show loading state
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> Sending...`;
+        btn.disabled = true;
+        btn.innerHTML = "Sending...";
 
-        // Send request to your backend server
-        const response = await fetch("https://portfolio-35qz.onrender.com/api/contact", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ fullname, email, message }),
-});
+        const res = await fetch(`${BACKEND_URL}/api/contact`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullname, email, message }),
+        });
 
-        const data = await response.json();
+        const data = await res.json();
 
-        if (response.ok && data.success) {
-          alert("Message sent successfully! I’ll get back to you soon.");
+        if (res.ok && data.success) {
+          alert("Message sent successfully!");
           contactForm.reset();
         } else {
-          alert("Failed to send message: " + (data.error || "Unknown error occurred"));
+          alert(data.error || "Failed to send message");
         }
-      } catch (error) {
-        console.error("Error submitting contact form:", error);
-        alert("Unable to reach the server. Please make sure your backend is running!");
+
+      } catch (err) {
+        console.error(err);
+        alert("Server error. Try again later.");
       } finally {
-        // Restore button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
+        btn.disabled = false;
+        btn.innerHTML = original;
       }
     });
   }
+
+// ===============================
+// CHATBOT FIX (FINAL)
+// ===============================
+
+const chatBtn = document.getElementById("chatbot-btn");
+const chatContainer = document.getElementById("chatbot-container");
+const chatOverlay = document.getElementById("chatbot-overlay");
+const chatMessages = document.getElementById("chatbot-messages");
+const userInput = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
+
+// ✅ SAFETY CHECK
+if (!chatBtn || !chatContainer || !chatOverlay) {
+  console.error("❌ Chatbot elements missing");
+}
+
+// OPEN
+function openChatbot() {
+  chatContainer.classList.add("active");
+  chatOverlay.classList.add("active");
+
+  setTimeout(() => userInput.focus(), 100);
+
+  if (chatMessages.children.length === 0) {
+    addMessage(
+      "bot",
+      "Hi! I'm Pranjali's AI Assistant 👋 Ask me about skills, projects or experience."
+    );
+  }
+}
+
+// CLOSE
+function closeChatbot() {
+  chatContainer.classList.remove("active");
+  chatOverlay.classList.remove("active");
+}
+
+// BUTTON CLICK
+chatBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); // ✅ IMPORTANT
+  openChatbot();
 });
+
+// OVERLAY CLICK = CLOSE
+chatOverlay.addEventListener("click", closeChatbot);
+
+// 🚫 PREVENT CLOSE WHEN CLICKING INSIDE CHAT
+chatContainer.addEventListener("click", (e) => {
+  e.stopPropagation(); // ✅ THIS FIXES YOUR ISSUE
+});
+
+// ESC KEY
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeChatbot();
+});
+
+// SEND MESSAGE
+async function sendMessageHandler() {
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  addMessage("user", message);
+  userInput.value = "";
+
+  const loading = addMessage("bot", "Typing...");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+    loading.innerText = data.reply || "No response.";
+
+  } catch (err) {
+    console.error(err);
+    loading.innerText = "❌ Server error. Try again later.";
+  }
+}
+
+// BUTTON
+sendBtn.addEventListener("click", sendMessageHandler);
+
+// ENTER KEY
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessageHandler();
+});
+
+// GLOBAL ACCESS
+window.sendMessage = sendMessageHandler;
+
+// QUICK BUTTONS
+window.sendQuick = function (type) {
+  let msg = "";
+
+  if (type === "skills") msg = "Tell me about Pranjali's skills";
+  if (type === "projects") msg = "Tell me about Pranjali's projects";
+  if (type === "contact") msg = "How to contact Pranjali";
+
+  userInput.value = msg;
+  sendMessageHandler();
+};
+
+// ADD MESSAGE UI
+function addMessage(sender, text) {
+  const div = document.createElement("div");
+  div.classList.add("message", sender);
+  div.textContent = text;
+
+  chatMessages.appendChild(div);
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  return div;
+}
