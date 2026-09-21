@@ -21,7 +21,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ✅ USE ONLY AVAILABLE MODEL
 const model = genAI.getGenerativeModel({
-  model: "gemini-3.6-flash"
+  model: "gemini-3.5-flash"
 });
 
 // =============================
@@ -141,13 +141,13 @@ User: ${message}
     });
 
   } catch (error) {
-    console.error("Gemini Error:", error);
+  console.error("🔥 GEMINI DEPLOYMENT ERROR FULL:", error);
 
-    res.json({
-      success: true,
-      reply: "I'm having a small issue right now, but feel free to ask again 😊",
-    });
-  }
+  res.status(500).json({
+    success: false,
+    reply: error?.message || JSON.stringify(error)
+  });
+}
 });
 
 // =============================
