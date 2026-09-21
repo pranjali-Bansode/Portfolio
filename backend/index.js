@@ -91,6 +91,23 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
+
+// =============================
+// RETRY FUNCTION 
+// =============================
+async function generateWithRetry(fn, retries = 3) {
+  try {
+    return await fn();
+  } catch (err) {
+    if (retries > 0 && err.message.includes("503")) {
+      console.log("Retrying Gemini due to 503...");
+      await new Promise(r => setTimeout(r, 2000)); // wait 2 sec
+      return generateWithRetry(fn, retries - 1);
+    }
+    throw err;
+  }
+}
+
 // =============================
 // CHAT API
 // =============================
@@ -129,7 +146,9 @@ ${message}
 Respond in full, complete sentences — do not truncate or abbreviate.
 `;
 
-     const result = await model.generateContent(prompt);
+     const result = await generateWithRetry(() =>
+  model.generateContent(prompt)
+);
     let text = result.response.text();
 
     res.json({
@@ -138,11 +157,10 @@ Respond in full, complete sentences — do not truncate or abbreviate.
     });
 
   } catch (error) {
-  console.error("🔥 GEMINI DEPLOYMENT ERROR FULL:", error);
+  console.error("Gemini Error:", error);
 
-  res.status(500).json({
-    success: false,
-    reply: error?.message || JSON.stringify(error)
+  return res.json({
+    reply: "I'm having a small issue right now, please try again in a moment 😊"
   });
 }
 });
